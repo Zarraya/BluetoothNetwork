@@ -1,0 +1,16 @@
+﻿<Properties StartupItem="BluetoothChat.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.03157df37ab18327" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="BluetoothChat.cs">
+    <Files>
+      <File FileName="BluetoothChat.cs" Line="88" Column="65" />
+      <File FileName="BluetoothChatService.cs" Line="1" Column="1" />
+      <File FileName="DeviceListActivity.cs" Line="49" Column="38" />
+      <File FileName="Resources/values/strings.xml" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.BluetoothChat AndroidDesignerPreferredDevice="Nexus 4" />
+</Properties>
