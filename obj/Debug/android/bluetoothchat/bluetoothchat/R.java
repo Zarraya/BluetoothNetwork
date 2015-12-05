@@ -11,18 +11,31 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
-        public static final int monoandroidsplash=0x7f020001;
+        public static final int backgroundimage=0x7f020000;
+        public static final int bmn_icon=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int monoandroidsplash=0x7f020003;
+        public static final int paperelement=0x7f020004;
+        public static final int titlescreen=0x7f020005;
     }
     public static final class id {
+        public static final int Title=0x7f070007;
         public static final int button_scan=0x7f070006;
-        public static final int button_send=0x7f070009;
-        public static final int discoverable=0x7f07000b;
-        public static final int edit_text_out=0x7f070008;
-        public static final int in=0x7f070007;
+        public static final int button_send=0x7f07000b;
+        public static final int createButton=0x7f070012;
+        public static final int discoverable=0x7f070014;
+        public static final int editText1=0x7f070011;
+        public static final int edit_text_out=0x7f07000a;
+        public static final int gameButton=0x7f070008;
+        public static final int in=0x7f070009;
+        public static final int linearLayout1=0x7f07000d;
+        public static final int nameText=0x7f070010;
+        public static final int newGameTitle=0x7f07000c;
         public static final int new_devices=0x7f070005;
+        public static final int numPlayers=0x7f07000f;
+        public static final int numPlayersText=0x7f07000e;
         public static final int paired_devices=0x7f070003;
-        public static final int scan=0x7f07000a;
+        public static final int scan=0x7f070013;
         public static final int title_left_text=0x7f070000;
         public static final int title_new_devices=0x7f070004;
         public static final int title_paired_devices=0x7f070002;
@@ -32,8 +45,10 @@ public final class R {
         public static final int custom_title=0x7f030000;
         public static final int device_list=0x7f030001;
         public static final int device_name=0x7f030002;
-        public static final int main=0x7f030003;
-        public static final int message=0x7f030004;
+        public static final int home=0x7f030003;
+        public static final int main=0x7f030004;
+        public static final int message=0x7f030005;
+        public static final int textinput=0x7f030006;
     }
     public static final class menu {
         public static final int option_menu=0x7f060000;
@@ -63,6 +78,8 @@ public final class R {
         public static final int title_paired_devices=0x7f04000b;
     }
     public static final class style {
-        public static final int Mono_Android_Theme_Splash=0x7f050000;
+        public static final int Mono_Android_Theme_Splash=0x7f050002;
+        public static final int Theme_Main=0x7f050001;
+        public static final int Theme_Splash=0x7f050000;
     }
 }

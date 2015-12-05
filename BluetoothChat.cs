@@ -14,7 +14,7 @@ namespace BluetoothChat
 	/// <summary>
 	/// This is the main Activity that displays the current chat session.
 	/// </summary>
-	[Activity (Label = "@string/app_name", MainLauncher = true,
+	[Activity (Label = "@string/app_name", MainLauncher = false,
 	           ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]
 	public class BluetoothChat : Activity
 	{
@@ -56,11 +56,11 @@ namespace BluetoothChat
 		// Member object for the chat services
 		private BluetoothChatService chatService = null;
 
-		protected override void OnCreate (Bundle bundle)
-		{
-			private BluetoothAdapter bluetoothAdapter = null;
+		//protected override void OnCreate (Bundle bundle)
+		//{
+			//BluetoothAdapter bluetoothAdapter = null;
 			// Member object for the chat services
-			private BluetoothChatService chatService = null;
+			//BluetoothChatService chatService = null;
 
 			protected override void OnCreate (Bundle bundle)
 			{

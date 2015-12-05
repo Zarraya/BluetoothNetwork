@@ -1,8 +1,8 @@
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/BluetoothChat.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/System.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/System.Xml.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/Mono.Android.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/System.Core.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/mscorlib.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/System.Runtime.Serialization.dll
-/Users/austinnafziger/Downloads/BluetoothChat/obj/Debug/assemblies/System.ServiceModel.Internals.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/BluetoothChat.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/System.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/System.Xml.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/Mono.Android.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/System.Core.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/mscorlib.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/System.Runtime.Serialization.dll
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/assemblies/System.ServiceModel.Internals.dll

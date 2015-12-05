@@ -32,7 +32,7 @@ public class TrialSplashScreen extends Activity {
 			public void run ()
 			{
 				finish ();
-				Intent intent = new Intent (TrialSplashScreen.this, md52cab87e79568059b98e61cae51903d9d.BluetoothChat.class);
+				Intent intent = new Intent (TrialSplashScreen.this, md58e5d11fa58a97af88a309f8ad7d5e60d.SplashActivity.class);
 				intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity (intent);
 			}

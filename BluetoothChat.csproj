@@ -50,6 +50,8 @@
     <Compile Include="BluetoothChat.cs" />
     <Compile Include="BluetoothChatService.cs" />
     <Compile Include="DeviceListActivity.cs" />
+    <Compile Include="SplashActivity.cs" />
+    <Compile Include="HomeActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -69,6 +71,13 @@
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\layout\Home.axml" />
+    <AndroidResource Include="Resources\values\Styles.xml" />
+    <AndroidResource Include="Resources\drawable-xhdpi\BackgroundImage.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\BMN_Icon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\PaperElement.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\TitleScreen.png" />
+    <AndroidResource Include="Resources\layout\TextInput.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
