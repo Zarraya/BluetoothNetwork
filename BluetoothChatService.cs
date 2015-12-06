@@ -255,19 +255,19 @@ namespace BluetoothChat
 		/// so we write to all
 		/// we are writing while synchronized
 		/// </param>
-		public void Write (byte[] @out)
+		public void Write (byte[] @out, int index)
 		{
 			// Create temporary object
 			ConnectedThread r;
 			// Synchronize a copy of the ConnectedThread
 			lock (this) {
-				foreach (ConnectedThread thread in connectedThread) {
-					if (_state == STATE_CONNECTED) {
-						r = connectedThread;
-						// Perform the write synchronized
-						r.Write (@out);
-					}
+				if (_state[index] == STATE_CONNECTED) {
+					r = connectedThread[index];
+					// Perform the write synchronized
 				}
+
+				r.Write (@out);
+
 			}
 
 		}

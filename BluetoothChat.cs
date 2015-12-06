@@ -220,8 +220,11 @@ namespace BluetoothChat
 			// Check that there's actually something to send
 			if (message.Length () > 0) {
 				// Get the message bytes and tell the BluetoothChatService to write
+				//Floods the message to all devices
 				byte[] send = message.GetBytes ();
-				chatService.Write (send);
+				for (int index = 0; index < BluetoothChatService.SIZE; index++) {
+					chatService.Write (send, index);
+				}
 	
 				// Reset out string buffer to zero and clear the edit text field
 				outStringBuffer.SetLength (0);
