@@ -212,9 +212,11 @@ namespace BluetoothChat
 		private void SendMessage (Java.Lang.String message)
 		{
 			// Check that we're actually connected before trying anything
-			if (chatService.GetState () != BluetoothChatService.STATE_CONNECTED) {
-				Toast.MakeText (this, Resource.String.not_connected, ToastLength.Short).Show ();
-				return;
+			for (int index = 0; index < BluetoothChatService.SIZE; index++) {
+				if (chatService.GetState (index) != BluetoothChatService.STATE_CONNECTED) {
+					Toast.MakeText (this, Resource.String.not_connected, ToastLength.Short).Show ();
+					return;
+				}
 			}
 	
 			// Check that there's actually something to send
