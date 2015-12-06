@@ -38,7 +38,9 @@ namespace BluetoothChat
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
-			
+
+			BluetoothChatService service = 
+
 			// Setup the window
 			RequestWindowFeature (WindowFeatures.IndeterminateProgress);
 			SetContentView (Resource.Layout.device_list);
@@ -147,12 +149,14 @@ namespace BluetoothChat
 			var address = info.Substring (info.Length - 17);
 			
 			// Create the result Intent and include the MAC address
-			Intent intent = new Intent ();
-			intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
+			//Intent intent = new Intent ();
+			//intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
 			
 			// Set result and finish this Activity
-			SetResult (Result.Ok, intent);
-			Finish ();
+			//SetResult (Result.Ok, intent);
+			//Finish ();
+
+			HomeActivity.home.initiateConnection(address);
 		}
 		
 		public class Receiver : BroadcastReceiver
