@@ -45,7 +45,7 @@ namespace BluetoothChat
 		private EditText outEditText;
 		private Button sendButton;
 	
-		// Name of the connected device
+		// Name of the connected devicen TODO: potentially make an array [7]
 		protected string connectedDeviceName = null;
 		// Array adapter for the conversation thread
 		protected ArrayAdapter<string> conversationArrayAdapter;
@@ -118,9 +118,11 @@ namespace BluetoothChat
 			// onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
 			if (chatService != null) {
 				// Only if the state is STATE_NONE, do we know that we haven't started already
-				if (chatService.GetState () == BluetoothChatService.STATE_NONE) {
-					// Start the Bluetooth chat services
-					chatService.Start ();
+				for(int index = 0; index < BluetoothChatService.SIZE; index++){
+					if (chatService.GetState (index) == BluetoothChatService.STATE_NONE) {
+						// Start the Bluetooth chat services
+						chatService.Start (index);
+					}
 				}
 			}
 		}

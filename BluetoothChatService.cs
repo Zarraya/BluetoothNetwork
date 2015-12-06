@@ -26,14 +26,17 @@ namespace BluetoothChat
 	
 		// Unique UUID for this application
 		private static UUID MY_UUID = UUID.FromString ("fa87c0d0-afac-11de-8a39-0800200c9a66");
-		
+
+		// Number of Connections
+		public const int SIZE = 5;
+
 		// Member fields
 		protected BluetoothAdapter _adapter;
 		protected Handler _handler;
-		private AcceptThread acceptThread;
-		protected ConnectThread connectThread;
-		private ConnectedThread connectedThread;
-		protected int _state;
+		private AcceptThread[] acceptThread = new AcceptThread[SIZE];
+		protected ConnectThread[] connectThread = new ConnectThread[SIZE];
+		private ConnectedThread[] connectedThread = new ConnectedThread[SIZE];
+		protected int[] _state = new int[SIZE];
 	
 		// Constants that indicate the current connection state
 		// TODO: Convert to Enums
@@ -41,7 +44,7 @@ namespace BluetoothChat
 		public const int STATE_LISTEN = 1;     // now listening for incoming connections
 		public const int STATE_CONNECTING = 2; // now initiating an outgoing connection
 		public const int STATE_CONNECTED = 3;  // now connected to a remote device
-		
+
 		/// <summary>
 		/// Constructor. Prepares a new BluetoothChat session.
 		/// </summary>
@@ -54,8 +57,10 @@ namespace BluetoothChat
 		public BluetoothChatService (Context context, Handler handler)
 		{
 			_adapter = BluetoothAdapter.DefaultAdapter;
-			_state = STATE_NONE;
 			_handler = handler;
+			foreach (int state in _state) {
+				state = STATE_NONE;
+			}
 		}
 		
 		/// <summary>
@@ -65,12 +70,12 @@ namespace BluetoothChat
 		/// An integer defining the current connection state.
 		/// </param>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		private void SetState (int state)
+		private void SetState (int state, int index)
 		{
 			if (Debug)
 				Log.Debug (TAG, "setState() " + _state + " -> " + state);
 			
-			_state = state;
+			_state[index] = state;
 	
 			// Give the new state to the Handler so the UI Activity can update
 			_handler.ObtainMessage (BluetoothChat.MESSAGE_STATE_CHANGE, state, -1).SendToTarget ();
@@ -80,38 +85,42 @@ namespace BluetoothChat
 		/// Return the current connection state.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public int GetState ()
+		public int GetState (int index)
 		{
-			return _state;
+			return _state[index];
 		}
 		
 		// Start the chat service. Specifically start AcceptThread to begin a
 		// session in listening (server) mode. Called by the Activity onResume()
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Start ()
+		public void Start (int index)
 		{	
+				
 			if (Debug)
 				Log.Debug (TAG, "start");
-	
+
 			// Cancel any thread attempting to make a connection
-			if (connectThread != null) {
-				connectThread.Cancel ();
-				connectThread = null;
+			if (connectThread[index] != null) {
+				connectThread[index].Cancel ();
+				connectThread[index] = null;
 			}
-	
+
 			// Cancel any thread currently running a connection
-			if (connectedThread != null) {
-				connectedThread.Cancel ();
-				connectedThread = null;
+			if (connectedThread[index] != null) {
+				connectedThread[index].Cancel ();
+				connectedThread[index] = null;
 			}
-	
+
+
 			// Start the thread to listen on a BluetoothServerSocket
-			if (acceptThread == null) {
-				acceptThread = new AcceptThread (this);
-				acceptThread.Start ();
+			// TODO listening multiple times, may break
+			if (acceptThread[index] == null) {
+				acceptThread[index] = new AcceptThread (this, index);
+				acceptThread[index].Start ();
 			}
-			
-			SetState (STATE_LISTEN);
+		
+			SetState (STATE_LISTEN, index);
+
 		}
 		
 		/// <summary>
@@ -123,29 +132,40 @@ namespace BluetoothChat
 		[MethodImpl(MethodImplOptions.Synchronized)]
 		public void Connect (BluetoothDevice device)
 		{
-			if (Debug)
-				Log.Debug (TAG, "connect to: " + device);
+			int index;
+			for (index = 0; index < connectThread.Length;index++) {
+				
+				if (Debug)
+					Log.Debug (TAG, "connect to: " + device);
 	
-			// Cancel any thread attempting to make a connection
-			if (_state == STATE_CONNECTING) {
-				if (connectThread != null) {
-					connectThread.Cancel ();
-					connectThread = null;
+				// Cancel any thread attempting to make a connection
+				if (_state [index] == STATE_CONNECTING) {
+					if (connectThread[index] != null) {
+						connectThread[index].Cancel ();
+						connectThread[index] = null;
+					}
+				}
+	
+				// Cancel any thread currently running a connection, if no open slots are available
+				if (connectedThread[index] != null && index == connectedThread.GetLength ()) {
+					// TODO SAFETY CHECK
+					// change index to the safe index value
+					connectedThread [index].Cancel ();
+					connectedThread = null;
+
+					break;
 				}
 			}
-	
-			// Cancel any thread currently running a connection
-			if (connectedThread != null) {
-				connectedThread.Cancel ();
-				connectedThread = null;
-			}
+		
 	
 			// Start the thread to connect with the given device
-			connectThread = new ConnectThread (device, this);
-			connectThread.Start ();
+			connectThread [index] = new ConnectThread (device, this);
+			connectThread [index].Start ();
 			
-			SetState (STATE_CONNECTING);
+			SetState (STATE_CONNECTING, index);
 		}
+		
+
 		
 		/// <summary>
 		/// Start the ConnectedThread to begin managing a Bluetooth connection
@@ -157,68 +177,72 @@ namespace BluetoothChat
 		/// The BluetoothDevice that has been connected.
 		/// </param>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Connected (BluetoothSocket socket, BluetoothDevice device)
+		public void Connected (BluetoothSocket socket, BluetoothDevice device, int index)
 		{
+				
 			if (Debug)
 				Log.Debug (TAG, "connected");
-	
+
 			// Cancel the thread that completed the connection
-			if (connectThread != null) {
-				connectThread.Cancel ();
-				connectThread = null;
+			if (connectThread [index] != null) {
+				connectThread [index].Cancel ();
+				connectThread [index] = null;
 			}
-	
+
 			// Cancel any thread currently running a connection
-			if (connectedThread != null) {
-				connectedThread.Cancel ();
-				connectedThread = null;
+			if (connectedThread [index] != null) {
+				connectedThread [index].Cancel ();
+				connectedThread [index] = null;
 			}
-	
+
 			// Cancel the accept thread because we only want to connect to one device
-			if (acceptThread != null) {
-				acceptThread.Cancel ();
-				acceptThread = null;
+			if (acceptThread [index] != null) {
+				acceptThread [index].Cancel ();
+				acceptThread [index] = null;
 			}
-			
+		
 			// Start the thread to manage the connection and perform transmissions
-			connectedThread = new ConnectedThread (socket, this);
-			connectedThread.Start ();
-	
+			connectedThread [index] = new ConnectedThread (socket, this, index);
+			connectedThread [index].Start ();
+
 			// Send the name of the connected device back to the UI Activity
-			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_DEVICE_NAME);
+			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_DEVICE_NAME [index]);
 			Bundle bundle = new Bundle ();
-			bundle.PutString (BluetoothChat.DEVICE_NAME, device.Name);
+			bundle.PutString (BluetoothChat.DEVICE_NAME [index], device.Name);
 			msg.Data = bundle;
 			_handler.SendMessage (msg);
-	
-			SetState (STATE_CONNECTED);
+
+			SetState (STATE_CONNECTED, index);
+
 		}
 		
 		/// <summary>
 		/// Stop all threads.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Stop ()
+		public void Stop (int index)
 		{
+
 			if (Debug)
 				Log.Debug (TAG, "stop");
-	
-			if (connectThread != null) {
-				connectThread.Cancel ();
-				connectThread = null;
+
+			if (connectThread[index] != null) {
+				connectThread[index].Cancel ();
+				connectThread[index] = null;
 			}
-	
-			if (connectedThread != null) {
-				connectedThread.Cancel ();
-				connectedThread = null;
+
+			if (connectedThread[index] != null) {
+				connectedThread[index].Cancel ();
+				connectedThread[index] = null;
 			}
-	
-			if (acceptThread != null) {
-				acceptThread.Cancel ();
-				acceptThread = null;
+
+			if (acceptThread[index] != null) {
+				acceptThread[index].Cancel ();
+				acceptThread[index] = null;
 			}
-			
-			SetState (STATE_NONE);
+		
+			SetState (STATE_NONE, index);
+
 		}
 		
 		/// <summary>
@@ -226,6 +250,10 @@ namespace BluetoothChat
 		/// </summary>
 		/// <param name='out'>
 		/// The bytes to write.
+		/// when we write, we are not writing to a specific thread
+		/// no routing, we are using a flooding technique
+		/// so we write to all
+		/// we are writing while synchronized
 		/// </param>
 		public void Write (byte[] @out)
 		{
@@ -233,20 +261,23 @@ namespace BluetoothChat
 			ConnectedThread r;
 			// Synchronize a copy of the ConnectedThread
 			lock (this) {
-				if (_state != STATE_CONNECTED)
-					return;
-				r = connectedThread;
+				foreach (ConnectedThread thread in connectedThread) {
+					if (_state == STATE_CONNECTED) {
+						r = connectedThread;
+						// Perform the write synchronized
+						r.Write (@out);
+					}
+				}
 			}
-			// Perform the write unsynchronized
-			r.Write (@out);
+
 		}
 	
 		/// <summary>
 		/// Indicate that the connection attempt failed and notify the UI Activity.
 		/// </summary>
-		private void ConnectionFailed ()
+		private void ConnectionFailed (int index)
 		{
-			SetState (STATE_LISTEN);
+			SetState (STATE_LISTEN, index);
 			
 			// Send a failure message back to the Activity
 			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_TOAST);
@@ -259,9 +290,9 @@ namespace BluetoothChat
 		/// <summary>
 		/// Indicate that the connection was lost and notify the UI Activity.
 		/// </summary>
-		public void ConnectionLost ()
+		public void ConnectionLost (int index)
 		{
-			SetState (STATE_LISTEN);
+			SetState (STATE_LISTEN, index);
 			
 			// Send a failure message back to the Activity
 			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_TOAST);
@@ -273,22 +304,23 @@ namespace BluetoothChat
 
 		/// <summary>
 		/// This thread runs while listening for incoming connections. It behaves
-		/// like a server-side client. It runs until a connection is accepted
+		/// like a server-side client. It runs until a it is full of connections
 		/// (or until cancelled).
 		/// </summary>
-		// TODO: Convert to a .NET thread
 		private class AcceptThread : Thread
 		{
 			// The local server socket
 			private BluetoothServerSocket mmServerSocket;
 			private BluetoothChatService _service;
+			private int mmIndex;
 			
-			public AcceptThread (BluetoothChatService service)
+			public AcceptThread (BluetoothChatService service, int index)
 			{
 				_service = service;
 				BluetoothServerSocket tmp = null;
+				mmIndex = index;
 	
-				// Create a new listening server socket
+				// Create a new listening server socket TODO potential problem with names?
 				try {
 					tmp = _service._adapter.ListenUsingRfcommWithServiceRecord (NAME, MY_UUID);
 	
@@ -307,7 +339,7 @@ namespace BluetoothChat
 				BluetoothSocket socket = null;
 	
 				// Listen to the server socket if we're not connected
-				while (_service._state != BluetoothChatService.STATE_CONNECTED) {
+				while (_service._state[mmIndex] != BluetoothChatService.STATE_CONNECTED) {
 					try {
 						// This is a blocking call and will only return on a
 						// successful connection or an exception
@@ -320,11 +352,11 @@ namespace BluetoothChat
 					// If a connection was accepted
 					if (socket != null) {
 						lock (this) {
-							switch (_service._state) {
+							switch (_service._state[mmIndex]) {
 							case STATE_LISTEN:
 							case STATE_CONNECTING:
 								// Situation normal. Start the connected thread.
-								_service.Connected (socket, socket.RemoteDevice);
+								_service.Connected (socket, socket.RemoteDevice, mmIndex);
 								break;
 							case STATE_NONE:
 							case STATE_CONNECTED:
@@ -368,12 +400,14 @@ namespace BluetoothChat
 			private BluetoothSocket mmSocket;
 			private BluetoothDevice mmDevice;
 			private BluetoothChatService _service;
+			private int mmIndex;
 			
-			public ConnectThread (BluetoothDevice device, BluetoothChatService service)
+			public ConnectThread (BluetoothDevice device, BluetoothChatService service, int index)
 			{
 				mmDevice = device;
 				_service = service;
 				BluetoothSocket tmp = null;
+				mmIndex = index;
 				
 				// Get a BluetoothSocket for a connection with the
 				// given BluetoothDevice
@@ -399,7 +433,7 @@ namespace BluetoothChat
 					// successful connection or an exception
 					mmSocket.Connect ();
 				} catch (Java.IO.IOException e) {
-					_service.ConnectionFailed ();
+					_service.ConnectionFailed (mmIndex);
 					// Close the socket
 					try {
 						mmSocket.Close ();
@@ -408,17 +442,17 @@ namespace BluetoothChat
 					}
 
 					// Start the service over to restart listening mode
-					_service.Start ();
+					_service.Start (mmIndex);
 					return;
 				}
 	
 				// Reset the ConnectThread because we're done
 				lock (this) {
-					_service.connectThread = null;
+					_service.connectThread[mmIndex] = null;
 				}
 	
 				// Start the connected thread
-				_service.Connected (mmSocket, mmDevice);
+				_service.Connected (mmSocket, mmDevice, mmIndex);
 			}
 	
 			public void Cancel ()
@@ -442,12 +476,14 @@ namespace BluetoothChat
 			private Stream mmInStream;
 			private Stream mmOutStream;
 			private BluetoothChatService _service;
+			private int mmIndex;
 	
-			public ConnectedThread (BluetoothSocket socket, BluetoothChatService service)
+			public ConnectedThread (BluetoothSocket socket, BluetoothChatService service, int index)
 			{
 				Log.Debug (TAG, "create ConnectedThread: ");
 				mmSocket = socket;
 				_service = service;
+				mmIndex = index;
 				Stream tmpIn = null;
 				Stream tmpOut = null;
 	
@@ -480,7 +516,7 @@ namespace BluetoothChat
 							.SendToTarget ();
 					} catch (Java.IO.IOException e) {
 						Log.Error (TAG, "disconnected", e);
-						_service.ConnectionLost ();
+						_service.ConnectionLost (mmIndex);
 						break;
 					}
 				}
