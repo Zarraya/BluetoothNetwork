@@ -69,8 +69,18 @@ namespace BluetoothChat
 					StartActivity(typeof(DeviceListActivity));
 				});
 
+
+
 				Dialog dialog = builder.Create();
 				dialog.Show();
+			};
+
+			var db = FindViewById<Button>(Resource.Id.drawTest);
+			db.Click+= (object sender2, EventArgs e2) => {
+
+				DrawView dv = new DrawView(this);
+
+				SetContentView(Resource.Layout.DrawingView);
 			};
 		}
 	}

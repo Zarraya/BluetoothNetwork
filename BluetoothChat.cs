@@ -226,8 +226,8 @@ namespace BluetoothChat
 				// Get the message bytes and tell the BluetoothChatService to write
 				//Floods the message to all devices
 				byte[] send = message.GetBytes ();
-				for (int index = 0; index < BluetoothChatService.SIZE; index++) {
-					chatService.Write (send, index);
+				for (int index1 = 0; index1 < BluetoothChatService.SIZE; index1++) {
+					chatService.Write (send, index1);
 				}
 	
 				// Reset out string buffer to zero and clear the edit text field

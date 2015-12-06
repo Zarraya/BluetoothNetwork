@@ -38,4 +38,9 @@
             android:id="@+id/doneButton"
             android:layout_weight="1" />
     </LinearLayout>
+    <view
+        class="BluetoothChat.DrawView"
+        android:id="@+id/drawCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

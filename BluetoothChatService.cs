@@ -58,8 +58,8 @@ namespace BluetoothChat
 		{
 			_adapter = BluetoothAdapter.DefaultAdapter;
 			_handler = handler;
-			foreach (int state in _state) {
-				state = STATE_NONE;
+			for(int i =0; i<SIZE; i++) {
+				_state[i] = STATE_NONE;
 			}
 		}
 		
@@ -147,7 +147,7 @@ namespace BluetoothChat
 				}
 	
 				// Cancel any thread currently running a connection, if no open slots are available
-				if (connectedThread[index] != null && index == connectedThread.GetLength ()) {
+				if (connectedThread[index] != null && index == connectedThread.Length) {
 					// TODO SAFETY CHECK
 					// change index to the safe index value
 					connectedThread [index].Cancel ();
@@ -206,9 +206,9 @@ namespace BluetoothChat
 			connectedThread [index].Start ();
 
 			// Send the name of the connected device back to the UI Activity
-			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_DEVICE_NAME [index]);
+			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_DEVICE_NAME );
 			Bundle bundle = new Bundle ();
-			bundle.PutString (BluetoothChat.DEVICE_NAME [index], device.Name);
+			bundle.PutString (BluetoothChat.DEVICE_NAME , device.Name);
 			msg.Data = bundle;
 			_handler.SendMessage (msg);
 
@@ -259,7 +259,7 @@ namespace BluetoothChat
 		{
 			// Create temporary object
 			ConnectedThread r;
-			// Synchronize a copy of the ConnectedThread
+
 			lock (this) {
 				if (_state[index] != STATE_CONNECTED) 
 					return;
@@ -451,6 +451,16 @@ namespace BluetoothChat
 	
 				// Start the connected thread
 				_service.Connected (mmSocket, mmDevice, mmIndex);
+
+				//continuing discovery service
+				for (int i = 0; i < SIZE; i++) {
+
+					if (_service._state [i] == BluetoothChatService.STATE_NONE || _service._state [i] == BluetoothChatService.STATE_LISTEN) {
+
+						_service._adapter.StartDiscovery ();
+						break;
+					}
+				}
 			}
 	
 			public void Cancel ()
