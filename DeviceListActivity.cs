@@ -18,7 +18,7 @@ namespace BluetoothChat
 	/// Activity in the result Intent.
 	/// </summary>
 	[Activity (Label = "@string/select_device", 
-				Theme = "@android:style/Theme.Dialog", 
+				Theme = "@android:style/Theme.DeviceDefault.Light.Dialog", 
 				ConfigurationChanges=Android.Content.PM.ConfigChanges.KeyboardHidden | Android.Content.PM.ConfigChanges.Orientation)]			
 	public class DeviceListActivity : Activity
 	{

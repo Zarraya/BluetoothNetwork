@@ -53,3 +53,4 @@
 /Users/austinnafziger/BluetoothNetwork/bin/Debug/BluetoothChat.BluetoothChat-Signed.apk
 /Users/austinnafziger/BluetoothNetwork/obj/Debug/uploadflags.txt
 /Users/austinnafziger/BluetoothNetwork/obj/Debug/res/layout/textinput.xml
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/res/layout/drawingview.xml

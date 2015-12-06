@@ -29,6 +29,7 @@
             android:gravity="center_vertical" />
         <EditText
             android:inputType="number"
+            android:theme="@android:style/Widget.DeviceDefault.EditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/numPlayers"
@@ -49,6 +50,7 @@
             android:gravity="center_vertical" />
         <EditText
             android:layout_width="match_parent"
+            android:theme="@android:style/Widget.DeviceDefault.EditText"
             android:layout_height="match_parent"
             android:id="@+id/editText1"
             android:layout_marginRight="24.0dp" />
@@ -56,10 +58,11 @@
     <Button
         android:text="Create"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="89.5dp"
         android:id="@+id/createButton"
         android:gravity="center"
-        android:layout_marginTop="150dp"
         android:background="@drawable/paperelement"
-        android:layout_marginBottom="15.5dp" />
+        android:maxHeight="50dp"
+        android:clickable="true"
+        android:layout_marginTop="45.5dp" />
 </LinearLayout>

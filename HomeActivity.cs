@@ -10,6 +10,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Bluetooth;
 
 namespace BluetoothChat
 {
@@ -20,10 +21,18 @@ namespace BluetoothChat
 		{
 			base.OnCreate (savedInstanceState);
 
+			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
+
 			SetContentView (Resource.Layout.Home);
 
 			var butt = FindViewById<Button> (Resource.Id.gameButton);
 			butt.Click += (object sender, EventArgs e) => {
+
+				if(!adapter.IsEnabled){
+
+					Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
+					StartActivityForResult (enableIntent, 1);
+				}
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this, 5);
 				builder.SetTitle("Start Game?");
@@ -44,14 +53,20 @@ namespace BluetoothChat
 						Console.WriteLine(number.Text.ToString());
 						Console.WriteLine(name.Text.ToString());
 
-						Finish();
+						adapter.SetName(name.Text.ToString());
+
+						Intent discoverIntent = new Intent(BluetoothAdapter.ActionRequestDiscoverable);
+						discoverIntent.PutExtra(BluetoothAdapter.ExtraDiscoverableDuration, 0);
+						StartActivity(discoverIntent);
+
+						SetContentView(Resource.Layout.Home);
 					};
 
 				});
 
 				builder.SetNegativeButton("Existing Game", (s, ev) => {
 
-
+					StartActivity(typeof(DeviceListActivity));
 				});
 
 				Dialog dialog = builder.Create();

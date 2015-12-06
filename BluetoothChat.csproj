@@ -52,6 +52,7 @@
     <Compile Include="DeviceListActivity.cs" />
     <Compile Include="SplashActivity.cs" />
     <Compile Include="HomeActivity.cs" />
+    <Compile Include="DrawView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -78,6 +79,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\PaperElement.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\TitleScreen.png" />
     <AndroidResource Include="Resources\layout\TextInput.axml" />
+    <AndroidResource Include="Resources\layout\DrawingView.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />
