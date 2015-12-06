@@ -159,7 +159,7 @@ namespace BluetoothChat
 		
 	
 			// Start the thread to connect with the given device
-			connectThread [index] = new ConnectThread (device, this);
+			connectThread [index] = new ConnectThread (device, this, index);
 			connectThread [index].Start ();
 			
 			SetState (STATE_CONNECTING, index);
@@ -261,15 +261,13 @@ namespace BluetoothChat
 			ConnectedThread r;
 			// Synchronize a copy of the ConnectedThread
 			lock (this) {
-				if (_state[index] == STATE_CONNECTED) {
-					r = connectedThread[index];
-					// Perform the write synchronized
-				}
-
-				r.Write (@out);
-
+				if (_state[index] != STATE_CONNECTED) 
+					return;
+			r = connectedThread[index];
+				// Perform the write synchronized
 			}
-
+			// Perform the write unsynchronized
+			r.Write (@out);
 		}
 	
 		/// <summary>
