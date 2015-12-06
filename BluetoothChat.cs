@@ -184,11 +184,13 @@ namespace BluetoothChat
 			base.OnDestroy ();
 			
 			// Stop the Bluetooth chat services
-			if (chatService != null)
-				chatService.Stop ();
+			for (int index = 0; index < BluetoothChatService.SIZE; index++) {
+				if (chatService != null)
+					chatService.Stop (index);
 			
-			if (Debug)
-				Log.Error (TAG, "--- ON DESTROY ---");
+				if (Debug)
+					Log.Error (TAG, "--- ON DESTROY ---");
+			}
 		}
 		
 		private void EnsureDiscoverable ()
