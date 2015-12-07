@@ -34,7 +34,11 @@ BluetoothChat.HomeActivity, BluetoothChat;md52cab87e79568059b98e61cae51903d9d.Ho
 BluetoothChat.HomeActivity, BluetoothChat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md52cab87e79568059b98e61cae51903d9d.HomeActivity
 BluetoothChat.HomeActivity;md52cab87e79568059b98e61cae51903d9d.HomeActivity
 bluetoothchat.HomeActivity;md52cab87e79568059b98e61cae51903d9d.HomeActivity
-BluetoothChat.DrawView, BluetoothChat;BluetoothChat.DrawingView
-BluetoothChat.DrawView, BluetoothChat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;BluetoothChat.DrawingView
-BluetoothChat.DrawView;BluetoothChat.DrawingView
-BluetoothChat.DrawingView;BluetoothChat.DrawingView
+BluetoothChat.DrawView, BluetoothChat;BluetoothChat.DrawView
+BluetoothChat.DrawView, BluetoothChat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;BluetoothChat.DrawView
+BluetoothChat.DrawView;BluetoothChat.DrawView
+BluetoothChat.DrawView;BluetoothChat.DrawView
+BluetoothChat.DrawTest, BluetoothChat;md52cab87e79568059b98e61cae51903d9d.DrawTest
+BluetoothChat.DrawTest, BluetoothChat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md52cab87e79568059b98e61cae51903d9d.DrawTest
+BluetoothChat.DrawTest;md52cab87e79568059b98e61cae51903d9d.DrawTest
+bluetoothchat.DrawTest;md52cab87e79568059b98e61cae51903d9d.DrawTest

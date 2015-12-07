@@ -16,7 +16,7 @@ using Android.Graphics;
 
 namespace BluetoothChat
 {
-	[Register("BluetoothChat.DrawingView")]
+	[Register("BluetoothChat.DrawView")]
 	public class DrawView : View
 	{
 
@@ -59,17 +59,19 @@ namespace BluetoothChat
 
 
 
-			var drawButt = FindViewById<Button> (Resource.Id.drawButton);
-			drawButt.Click += (object sender, EventArgs e) => {
-
-				setColor(false);
-			};
-
-			var clearButt = FindViewById<Button> (Resource.Id.clearButton);
-			clearButt.Click += (object sender, EventArgs e) => {
-
-				setColor(true);
-			};
+//			var drawButt = FindViewById<Button> (Resource.Id.drawButton);
+//			drawButt.Click += (object sender, EventArgs e) => {
+//
+//				Console.WriteLine("draw");
+//				setColor(false);
+//			};
+//
+//			var clearButt = FindViewById<Button> (Resource.Id.clearButton);
+//			clearButt.Click += (object sender, EventArgs e) => {
+//
+//				Console.WriteLine("clear");
+//				setColor(true);
+//			};
 		}
 
 		public void setColor(bool erase){
@@ -82,6 +84,33 @@ namespace BluetoothChat
 			} else {
 				drawPaint.Color = Color.White;
 			}
+		}
+
+		public bool onTouchEvent(MotionEvent event1){
+
+			Console.WriteLine ("touch event");
+
+			float x = event1.GetX ();
+			float y = event1.GetY ();
+
+			switch (event1.Action) {
+
+			case MotionEventActions.Down:
+				drawPath.MoveTo (x, y);
+				break;
+			case MotionEventActions.Move:
+				drawPath.LineTo (x, y);
+				break;
+			case MotionEventActions.Up:
+				drawCanvas.DrawPath (drawPath, drawPaint);
+				drawPath.Reset ();
+				break;
+			default:
+				return false;
+			}
+
+			Invalidate ();
+			return true;
 		}
 	}
 }

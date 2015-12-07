@@ -39,8 +39,6 @@ namespace BluetoothChat
 		{
 			base.OnCreate (bundle);
 
-			BluetoothChatService service = 
-
 			// Setup the window
 			RequestWindowFeature (WindowFeatures.IndeterminateProgress);
 			SetContentView (Resource.Layout.device_list);
@@ -155,8 +153,6 @@ namespace BluetoothChat
 			// Set result and finish this Activity
 			//SetResult (Result.Ok, intent);
 			//Finish ();
-
-			HomeActivity.home.initiateConnection(address);
 		}
 		
 		public class Receiver : BroadcastReceiver

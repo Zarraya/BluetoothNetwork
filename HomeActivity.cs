@@ -16,28 +16,17 @@ namespace BluetoothChat
 {
 	
 
-	[Activity (Label = "HomeActivity")]			
+	[Activity (Label = "HomeActivity", Theme = "@style/Theme.Main")]			
 	public class HomeActivity : Activity
 	{
-		public static HomeActivity home;
-
-		public const int MESSAGE_STATE_CHANGE = 1;
-		public const int MESSAGE_READ = 2;
-		public const int MESSAGE_WRITE = 3;
-		public const int MESSAGE_DEVICE_NAME = 4;
-		public const int MESSAGE_TOAST = 5;
-
-		BluetoothChatService chatService;
+		
 
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
 
-			home = this;
-
 			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
 
-			chatService = new BluetoothChatService (this, new MyHandler(new Message() message));
 
 			SetContentView (Resource.Layout.Home);
 
@@ -94,80 +83,67 @@ namespace BluetoothChat
 			var db = FindViewById<Button>(Resource.Id.drawTest);
 			db.Click+= (object sender2, EventArgs e2) => {
 
-				DrawView dv = new DrawView(this);
+				Android.Graphics.Bitmap image;
 
-				SetContentView(Resource.Layout.DrawingView);
+				LinearLayout layout = new LinearLayout (this);
+				layout.Orientation = Orientation.Vertical;
+				layout.SetBackgroundColor(Android.Graphics.Color.White);
+				LinearLayout horiLayout = new LinearLayout (this);
+				horiLayout.SetBackgroundColor(Android.Graphics.Color.SlateGray);
+				horiLayout.Orientation = Orientation.Horizontal;
+
+				Button drawButt = new Button (this);
+				drawButt.Text = "Draw";
+				horiLayout.AddView(drawButt);
+
+				Button eraseButt = new Button (this);
+				eraseButt.Text = "Erase";
+				horiLayout.AddView(eraseButt);
+
+				Button clearButt = new Button (this);
+				clearButt.Text = "Clear";
+				horiLayout.AddView(clearButt);
+
+				Button doneButt = new Button (this);
+				doneButt.Text = "Done";
+				horiLayout.AddView(doneButt);
+
+				DrawTest dt = new DrawTest(this);
+
+				layout.AddView(horiLayout);
+				layout.AddView(dt);
+
+				drawButt.Click += (object sender, EventArgs e) => {
+
+					dt.setColor(false);
+				};
+
+				eraseButt.Click += (object sender, EventArgs e) => {
+
+					dt.setColor(true);
+				};
+
+				clearButt.Click += (object sender, EventArgs e) => {
+
+					dt.clear();
+				};
+
+				doneButt.Click += (object sender, EventArgs e) => {
+
+					image = dt.done();
+					SetContentView(Resource.Layout.Home);
+				};
+
+				SetContentView(layout);
+				//SetContentView(new DrawTest(this));
+
+				//DrawView dv = new DrawView(this);
 			};
 		}
-
-		public void initiateConnection(string address){
-
-			BluetoothDevice device = BluetoothAdapter.DefaultAdapter.GetRemoteDevice (address);
-
-			chatService.Connect (device);
-		}
+			
 	}
 
-	// The Handler that gets information back from the BluetoothChatService
-	class MyHandler : Handler
-	{
 
-		public const int MESSAGE_STATE_CHANGE = 1;
-		public const int MESSAGE_READ = 2;
-		public const int MESSAGE_WRITE = 3;
-		public const int MESSAGE_DEVICE_NAME = 4;
-		public const int MESSAGE_TOAST = 5;
 
-		BluetoothChat bluetoothChat;
-
-		public MyHandler (BluetoothChat chat)
-		{
-			bluetoothChat = chat;	
-		}
-
-		public override void HandleMessage (Message msg)
-		{
-			switch (msg.What) {
-			case MESSAGE_STATE_CHANGE:
-				//if (Debug)
-					//Log.Info (TAG, "MESSAGE_STATE_CHANGE: " + msg.Arg1);
-				switch (msg.Arg1) {
-				case BluetoothChatService.STATE_CONNECTED:
-					//bluetoothChat.title.SetText (Resource.String.title_connected_to);
-					//bluetoothChat.title.Append (bluetoothChat.connectedDeviceName);
-					//bluetoothChat.conversationArrayAdapter.Clear ();
-					break;
-				case BluetoothChatService.STATE_CONNECTING:
-					//bluetoothChat.title.SetText (Resource.String.title_connecting);
-					break;
-				case BluetoothChatService.STATE_LISTEN:
-				case BluetoothChatService.STATE_NONE:
-					//bluetoothChat.title.SetText (Resource.String.title_not_connected);
-					break;
-				}
-				break;
-			case MESSAGE_WRITE:
-				byte[] writeBuf = (byte[])msg.Obj;
-				// construct a string from the buffer
-				var writeMessage = new Java.Lang.String (writeBuf);
-				//bluetoothChat.conversationArrayAdapter.Add ("Me: " + writeMessage);
-				break;
-			case MESSAGE_READ:
-				byte[] readBuf = (byte[])msg.Obj;
-				// construct a string from the valid bytes in the buffer
-				var readMessage = new Java.Lang.String (readBuf, 0, msg.Arg1);
-				//bluetoothChat.conversationArrayAdapter.Add (bluetoothChat.connectedDeviceName + ":  " + readMessage);
-				break;
-			case MESSAGE_DEVICE_NAME:
-				// save the connected device's name
-				//bluetoothChat.connectedDeviceName = msg.Data.GetString (DEVICE_NAME);
-				//Toast.MakeText (Application.Context, "Connected to " + bluetoothChat.connectedDeviceName, ToastLength.Short).Show ();
-				break;
-			case MESSAGE_TOAST:
-				//Toast.MakeText (Application.Context, msg.Data.GetString (TOAST), ToastLength.Short).Show ();
-				break;
-			}
-		}
-	}
 }
 
