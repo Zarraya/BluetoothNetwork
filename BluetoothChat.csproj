@@ -53,7 +53,12 @@
     <Compile Include="SplashActivity.cs" />
     <Compile Include="HomeActivity.cs" />
     <Compile Include="DrawView.cs" />
+<<<<<<< HEAD
     <Compile Include="DrawTest.cs" />
+=======
+    <Compile Include="BlueChat.cs" />
+    <Compile Include="BlueHandle.cs" />
+>>>>>>> origin/master
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
