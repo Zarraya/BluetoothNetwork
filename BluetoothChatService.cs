@@ -208,7 +208,7 @@ namespace BluetoothChat
 			// Send the name of the connected device back to the UI Activity
 			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_DEVICE_NAME );
 			Bundle bundle = new Bundle ();
-			bundle.PutString (BluetoothChat.DEVICE_NAME , device.Name);
+			bundle.PutString (BlueHandle.DEVICE_NAME , device.Name);
 			msg.Data = bundle;
 			_handler.SendMessage (msg);
 
@@ -296,6 +296,7 @@ namespace BluetoothChat
 			var msg = _handler.ObtainMessage (BluetoothChat.MESSAGE_TOAST);
 			Bundle bundle = new Bundle ();
 			bundle.PutString (BluetoothChat.TOAST, "Device connection was lost");
+			//bundle.PutString (BluetoothChat.DEVICE_NAME, Device.name);
 			msg.Data = bundle;
 			_handler.SendMessage (msg);
 		}
@@ -540,10 +541,6 @@ namespace BluetoothChat
 			{
 				try {
 					mmOutStream.Write (buffer, 0, buffer.Length);
-	
-					// Share the sent message back to the UI Activity
-					_service._handler.ObtainMessage (BluetoothChat.MESSAGE_WRITE, -1, -1, buffer)
-						.SendToTarget ();
 				} catch (Java.IO.IOException e) {
 					Log.Error (TAG, "Exception during write", e);
 				}

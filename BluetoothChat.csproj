@@ -54,6 +54,7 @@
     <Compile Include="HomeActivity.cs" />
     <Compile Include="DrawView.cs" />
     <Compile Include="BlueChat.cs" />
+    <Compile Include="BlueHandle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
