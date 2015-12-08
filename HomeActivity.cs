@@ -19,11 +19,13 @@ namespace BluetoothChat
 	[Activity (Label = "HomeActivity", Theme = "@style/Theme.Main")]			
 	public class HomeActivity : Activity
 	{
-		
+		protected BlueHandle handle;
 
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
+
+			handle = new BlueHandle ();
 
 			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
 
@@ -71,7 +73,9 @@ namespace BluetoothChat
 
 				builder.SetNegativeButton("Existing Game", (s, ev) => {
 
-					StartActivity(typeof(DeviceListActivity));
+					Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+
+					StartActivityForResult(serverIntent, 1);
 				});
 
 
@@ -139,6 +143,13 @@ namespace BluetoothChat
 
 				//DrawView dv = new DrawView(this);
 			};
+		}
+
+		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult (requestCode, resultCode, data);
+
+			handle.giveResult (requestCode, resultCode, data);
 		}
 			
 	}

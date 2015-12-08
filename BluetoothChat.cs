@@ -341,6 +341,7 @@ namespace BluetoothChat
 			switch (item.ItemId) 
 			{
 				case Resource.Id.scan:
+				
 					// Launch the DeviceListActivity to see devices and do scan
 					var serverIntent = new Intent(this, typeof(DeviceListActivity));
 					StartActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);

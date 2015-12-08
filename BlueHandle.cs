@@ -42,6 +42,8 @@ namespace BluetoothChat
 
 		// Intent request codes
 		private const int REQUEST_CONNECT_DEVICE = 1;
+		private const int REQUEST_ENABLE_BT = 2;
+
 
 		// Names of connected devices
 		protected ArrayList DeviceNames = new ArrayList();
@@ -52,18 +54,83 @@ namespace BluetoothChat
 		private BluetoothChatService service = null;
 
 
-		//Initialization
-		public BlueHandle (BluetoothAdapter adapter, int maxDevices)
+		protected override void OnCreate (Bundle bundle)
 		{
+			base.OnCreate (bundle);
+			//Initialization
 			// Get local Bluetooth adapter
-			bluetoothAdapter = adapter;
-			this.maxDevices = maxDevices;
+			bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
-			// Initialize the BluetoothChatService to perform bluetooth connections
-			service = new BluetoothChatService (this, new MyHandler (this));
+			if(!bluetoothAdapter.IsEnabled){
 
+				Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
+				StartActivityForResult (enableIntent, 1);
+			}
+
+			// If the adapter is null, then Bluetooth is not supported
+			if (bluetoothAdapter == null) {
+				Toast.MakeText (this, "Bluetooth is not available", ToastLength.Long).Show ();
+				Finish ();
+				return;
+			}
+				
 		}
 
+
+		protected override void OnStart ()
+		{
+			base.OnStart ();
+
+			// If BT is not on, request that it be enabled.
+			// setupChat() will then be called during onActivityResult
+			if (!bluetoothAdapter.IsEnabled) {
+				Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
+				StartActivityForResult (enableIntent, REQUEST_ENABLE_BT);
+				// Otherwise, setup the chat session
+			} else {
+				if (service == null)
+					// Initialize the BluetoothChatService to perform bluetooth connections
+					service = new BluetoothChatService (this, new MyHandler (this));			}
+		}
+
+		protected override void OnResume ()
+		{
+			base.OnResume ();
+
+			// Performing this check in onResume() covers the case in which BT was
+			// not enabled during onStart(), so we were paused to enable it...
+			// onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+			if (service != null) {
+				// Only if the state is STATE_NONE, do we know that we haven't started already
+				for(int index = 0; index < BluetoothChatService.SIZE; index++){
+					if (service.GetState (index) == BluetoothChatService.STATE_NONE) {
+						// Start the Bluetooth chat services
+						service.Start (index);
+					}
+				}
+			}
+		}
+
+		protected override void OnDestroy ()
+		{
+			base.OnDestroy ();
+
+			// Stop the Bluetooth chat services
+			// sorts through all devices
+			for (int index = 0; index < BluetoothChatService.SIZE; index++) {
+				if (service != null)
+					service.Stop (index);
+			}
+		}
+
+		private void EnsureDiscoverable ()
+		{
+			if (bluetoothAdapter.ScanMode != ScanMode.ConnectableDiscoverable) {
+				Intent discoverableIntent = new Intent (BluetoothAdapter.ActionRequestDiscoverable);
+				discoverableIntent.PutExtra (BluetoothAdapter.ExtraDiscoverableDuration, 300);
+				StartActivity (discoverableIntent);
+			}
+		}
 		//Functions
 
 		public int getNumDevices(){
@@ -169,23 +236,32 @@ namespace BluetoothChat
 		/// <param name="requestCode">Request code.</param>
 		/// <param name="resultCode">Result code.</param>
 		/// <param name="data">Data.</param>
-		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		public void giveResult(int requestCode, Result resultCode, Intent data)
 		{
-			if (Debug)
-				Log.Debug (TAG, "onActivityResult " + resultCode);
 
-			switch(requestCode)
-			{
+			switch (requestCode) {
 			case REQUEST_CONNECT_DEVICE:
 				// When DeviceListActivity returns with a device to connect
-				if( resultCode == Result.Ok)
-				{
+				if (resultCode == Result.Ok) {
 					// Get the device MAC address
-					var address = data.Extras.GetString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+					var address = data.Extras.GetString (DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 					// Get the BLuetoothDevice object
-					BluetoothDevice device = bluetoothAdapter.GetRemoteDevice(address);
+					BluetoothDevice device = bluetoothAdapter.GetRemoteDevice (address);
 					// Attempt to connect to the device
-					service.Connect(device);
+					service.Connect (device);
+				}
+				break;
+			case REQUEST_ENABLE_BT:
+				// When the request to enable Bluetooth returns
+				if (resultCode == Result.Ok) {
+					// Bluetooth is now enabled, so set up service
+					service = new BluetoothChatService (this, new MyHandler (this));
+				} else {
+				
+					// User did not enable Bluetooth or an error occured
+					Log.Debug (TAG, "BT not enabled");
+					Toast.MakeText (this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show ();
+					Finish ();
 				}
 				break;
 			}
@@ -204,8 +280,9 @@ namespace BluetoothChat
 			for (int index = 0; index < BluetoothChatService.SIZE; index++) {
 				service.Write (message, index);
 			}
-
 		}
+
 	}
+
 }
 
