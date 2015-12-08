@@ -15,7 +15,7 @@ namespace BluetoothChat
 	/// <summary>
 	/// This activity handles all bluetooth aspects
 	/// </summary>
-	public class BlueHandle
+	public class BlueHandle : Activity
 	{
 		//Variables
 		public int maxDevices;
@@ -97,15 +97,6 @@ namespace BluetoothChat
 				}
 			}
 			return false;
-		}
-		/// <summary>
-		/// Raises the destroy event.
-		/// </summary>
-		protected override void OnDestroy(){
-			for (int index = 0; index < BluetoothChatService.SIZE; index++) {
-				if (service != null)
-					service.Stop (index);
-			}
 		}
 
 		// The Handler that gets information back from the BluetoothChatService
