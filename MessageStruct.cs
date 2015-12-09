@@ -7,6 +7,7 @@ namespace BluetoothChat
 		short destination;
 		short source;
 		bool pass;
+		bool type;
 		int length;
 		byte[] data;
 
@@ -33,6 +34,16 @@ namespace BluetoothChat
 				return data;
 			}
 			set{ data = value;}
+		}
+
+		public bool Type {
+			get {
+				return type;
+			}
+			set {
+				data = value;
+			}
+				
 		}
 	}
 }

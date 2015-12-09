@@ -56,6 +56,8 @@ namespace BluetoothChat
 		// bluetooth service
 		private BluetoothChatService service = null;
 
+		// textview for connected devices
+		TextView text = FindViewById<TextView> (Resource.Id.textView);
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -248,8 +250,6 @@ namespace BluetoothChat
 			{
 				switch (msg.What) {
 				case MESSAGE_STATE_CHANGE:
-					if (Debug)
-						Log.Info (TAG, "MESSAGE_STATE_CHANGE: " + msg.Arg1);
 					switch (msg.Arg1) {
 					case BluetoothChatService.STATE_CONNECTED:
 						//bluetoothChat.title.SetText (Resource.String.title_connected_to);
@@ -287,10 +287,7 @@ namespace BluetoothChat
 
 						foreach (string device in devices) {
 							// add unique devices to the list
-							if (!bluetooth.DeviceFound (device)) {
-								bluetooth.DeviceNames.Add (device);
-								bluetooth.devices++;
-							}
+							AddDevice(device);
 						}
 					} else {
 						//add message to the messageList
@@ -304,9 +301,7 @@ namespace BluetoothChat
 					break;
 					// saves the device to the list of devices
 				case MESSAGE_DEVICE_NAME:
-					if (!bluetooth.DeviceFound (msg.Data.GetString (DEVICE_NAME))) {
-						bluetooth.DeviceNames.Add (msg.Data.GetString (DEVICE_NAME));
-						bluetooth.devices++;
+					if(AddDevice(msg.Data.GetString (DEVICE_NAME))){
 						bluetooth.directDevices++;
 
 						// send updated device list to all
@@ -330,6 +325,17 @@ namespace BluetoothChat
 					Toast.MakeText (Application.Context, msg.Data.GetString (TOAST), ToastLength.Short).Show ();
 					break;					
 				}
+			}
+
+			public bool AddDevice(string device){
+				if (!bluetooth.DeviceFound (device)) {
+					bluetooth.DeviceNames.Add (device);
+					bluetooth.devices++;
+					text.Text = bluetooth.devices + " / " + bluetooth.maxDevices + " Devices Connected";
+
+					return true;
+				}
+				return false;
 			}
 
 			/// <summary>
