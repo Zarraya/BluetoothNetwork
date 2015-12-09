@@ -61,6 +61,13 @@ namespace BluetoothChat
 			for(int i =0; i<SIZE; i++) {
 				_state[i] = STATE_NONE;
 			}
+
+			for (int i = 0; i < SIZE; i++) {
+
+				connectThread [i] = null;
+				acceptThread [i] = null;
+				connectedThread [i] = null;
+			}
 		}
 		
 		/// <summary>
@@ -133,21 +140,24 @@ namespace BluetoothChat
 		public void Connect (BluetoothDevice device)
 		{
 			int index;
-			for (index = 0; index < connectThread.Length;index++) {
-				
-				if (Debug)
-					Log.Debug (TAG, "connect to: " + device);
+			for (index = 0; index < SIZE;index++) {
 	
+				if (connectedThread [index] == null) {
+
+					break;
+				}
+
 				// Cancel any thread attempting to make a connection
 				if (_state [index] == STATE_CONNECTING) {
 					if (connectThread[index] != null) {
 						connectThread[index].Cancel ();
 						connectThread[index] = null;
+						break;
 					}
 				}
 	
 				// Cancel any thread currently running a connection, if no open slots are available
-				if (connectedThread[index] != null && index == connectedThread.Length) {
+				if (connectedThread[index] != null && index == SIZE-1) {
 					// TODO SAFETY CHECK
 					// change index to the safe index value
 					connectedThread [index].Cancel ();
@@ -157,7 +167,7 @@ namespace BluetoothChat
 				}
 			}
 		
-	
+
 			// Start the thread to connect with the given device
 			connectThread [index] = new ConnectThread (device, this, index);
 			connectThread [index].Start ();

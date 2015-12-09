@@ -55,6 +55,7 @@
     <Compile Include="DrawView.cs" />
     <Compile Include="DrawTest.cs" />
     <Compile Include="BlueHandle.cs" />
+    <Compile Include="WaitActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -82,6 +83,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\TitleScreen.png" />
     <AndroidResource Include="Resources\layout\TextInput.axml" />
     <AndroidResource Include="Resources\layout\DrawingView.axml" />
+    <AndroidResource Include="Resources\layout\WaitView.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

@@ -145,14 +145,19 @@ namespace BluetoothChat
 			// Get the device MAC address, which is the last 17 chars in the View
 			var info = (e.View as TextView).Text.ToString ();
 			var address = info.Substring (info.Length - 17);
+
+			if (address == null) {
+
+				Console.WriteLine ("Null Error");
+			}
 			
 			// Create the result Intent and include the MAC address
-			//Intent intent = new Intent ();
-			//intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
+			Intent intent = new Intent ();
+			intent.PutExtra (EXTRA_DEVICE_ADDRESS, address);
 			
 			// Set result and finish this Activity
-			//SetResult (Result.Ok, intent);
-			//Finish ();
+			SetResult (Result.Ok, intent);
+			Finish ();
 		}
 		
 		public class Receiver : BroadcastReceiver

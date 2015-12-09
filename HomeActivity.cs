@@ -20,6 +20,7 @@ namespace BluetoothChat
 	public class HomeActivity : Activity
 	{
 		protected BlueHandle handle;
+		protected bool activeReturn = false;
 
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
@@ -72,6 +73,8 @@ namespace BluetoothChat
 				});
 
 				builder.SetNegativeButton("Existing Game", (s, ev) => {
+
+					activeReturn = true;
 
 					Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
 
@@ -147,9 +150,13 @@ namespace BluetoothChat
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
-			base.OnActivityResult (requestCode, resultCode, data);
+			if (activeReturn) {
+				base.OnActivityResult (requestCode, resultCode, data);
 
-			handle.giveResult (requestCode, resultCode, data);
+				//handle.giveResult (requestCode, resultCode, data);
+
+				activeReturn = false;
+			}
 		}
 			
 	}

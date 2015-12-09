@@ -15,6 +15,7 @@ namespace BluetoothChat
 	/// <summary>
 	/// This activity handles all bluetooth aspects
 	/// </summary>
+	[Activity (Theme = "@style/Theme.Main")]
 	public class BlueHandle : Activity
 	{
 		//Variables
@@ -26,6 +27,7 @@ namespace BluetoothChat
 		// Debugging
 		private const string TAG = "BluetoothChat";
 		private const bool Debug = true;
+		private bool activeReturn = false;
 
 		// Message types sent from the BluetoothChatService Handler
 		// TODO: Make into Enums
@@ -73,6 +75,65 @@ namespace BluetoothChat
 				Finish ();
 				return;
 			}
+
+			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
+
+
+			SetContentView (Resource.Layout.Home);
+
+			var butt = FindViewById<Button> (Resource.Id.gameButton);
+			butt.Click += (object sender, EventArgs e) => {
+
+//				if(!adapter.IsEnabled){
+//
+//					Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
+//					StartActivityForResult (enableIntent, 1);
+//				}
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this, 5);
+				builder.SetTitle("Start Game?");
+				builder.SetMessage("Do you want to start a new game or connect to an exsiting one?");
+				builder.SetPositiveButton("New Game", (s, ev) => {
+
+					SetContentView(Resource.Layout.TextInput);
+
+					var number = FindViewById<EditText>(Resource.Id.numPlayers);
+
+					var name = FindViewById<EditText>(Resource.Id.editText1);
+
+
+					var button = FindViewById<Button>(Resource.Id.createButton);
+
+					button.Click += (object sender1, EventArgs e1) => {
+
+						Console.WriteLine(number.Text.ToString());
+						Console.WriteLine(name.Text.ToString());
+
+						adapter.SetName(name.Text.ToString());
+
+						Intent discoverIntent = new Intent(BluetoothAdapter.ActionRequestDiscoverable);
+						discoverIntent.PutExtra(BluetoothAdapter.ExtraDiscoverableDuration, 0);
+						StartActivity(discoverIntent);
+
+
+					};
+
+				});
+
+				builder.SetNegativeButton("Existing Game", (s, ev) => {
+
+					activeReturn = true;
+
+					Intent serverIntent = new Intent(this, typeof(DeviceListActivity));
+
+					StartActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+				});
+
+
+
+				Dialog dialog = builder.Create();
+				dialog.Show();
+			};
 				
 		}
 
@@ -203,22 +264,22 @@ namespace BluetoothChat
 					break;
 				case MESSAGE_READ:
 					byte[] readBuf = (byte[])msg.Obj;
-					if(!HasMessages(readBuf)){
-						messages.Add (readBuf);
+					if(!bluetooth.HasMessages(readBuf)){
+						bluetooth.messages.Add (readBuf);
 						// TODO DECODE and determine if is a device list
 						// if it is a device list, add new devices to the count
 						// TODO read to method
 						// blank.RecieveMessage(readBuf);
 						// forward the message
-						SendMessage(readBuf);
+						bluetooth.SendMessage(readBuf);
 					}
 					break;
 					// saves the device to the list of devices
 				case MESSAGE_DEVICE_NAME:
-					if (!DeviceFound (msg.Data.GetString (DEVICE_NAME))) {
+					if (!bluetooth.DeviceFound (msg.Data.GetString (DEVICE_NAME))) {
 						bluetooth.DeviceNames.Add (msg.Data.GetString (DEVICE_NAME));
-						devices++;
-						directDevices++;
+						bluetooth.devices++;
+						bluetooth.directDevices++;
 					}
 					//Toast.MakeText (Application.Context, "Connected to " + bluetoothChat.connectedDeviceName, ToastLength.Short).Show ();
 					break;
@@ -236,7 +297,7 @@ namespace BluetoothChat
 		/// <param name="requestCode">Request code.</param>
 		/// <param name="resultCode">Result code.</param>
 		/// <param name="data">Data.</param>
-		public void giveResult(int requestCode, Result resultCode, Intent data)
+		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
 
 			switch (requestCode) {
@@ -265,6 +326,8 @@ namespace BluetoothChat
 				}
 				break;
 			}
+
+			StartActivity (typeof(WaitActivity));
 		}
 
 		/// <summary>

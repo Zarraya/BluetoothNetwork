@@ -90,8 +90,8 @@ namespace BluetoothChat
 			// aapt resource value: 0x7f070018
 			public const int createButton = 2131165208;
 			
-			// aapt resource value: 0x7f07001a
-			public const int discoverable = 2131165210;
+			// aapt resource value: 0x7f07001b
+			public const int discoverable = 2131165211;
 			
 			// aapt resource value: 0x7f07000b
 			public const int doneButton = 2131165195;
@@ -141,8 +141,11 @@ namespace BluetoothChat
 			// aapt resource value: 0x7f070003
 			public const int paired_devices = 2131165187;
 			
+			// aapt resource value: 0x7f07001a
+			public const int scan = 2131165210;
+			
 			// aapt resource value: 0x7f070019
-			public const int scan = 2131165209;
+			public const int textView = 2131165209;
 			
 			// aapt resource value: 0x7f070000
 			public const int title_left_text = 2131165184;
@@ -192,6 +195,9 @@ namespace BluetoothChat
 			
 			// aapt resource value: 0x7f030007
 			public const int TextInput = 2130903047;
+			
+			// aapt resource value: 0x7f030008
+			public const int WaitView = 2130903048;
 			
 			static Layout()
 			{

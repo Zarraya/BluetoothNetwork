@@ -24,7 +24,7 @@ public final class R {
         public static final int button_send=0x7f070012;
         public static final int clearButton=0x7f07000a;
         public static final int createButton=0x7f070018;
-        public static final int discoverable=0x7f07001a;
+        public static final int discoverable=0x7f07001b;
         public static final int doneButton=0x7f07000b;
         public static final int drawButton=0x7f070008;
         public static final int drawCanvas=0x7f07000c;
@@ -41,7 +41,8 @@ public final class R {
         public static final int numPlayers=0x7f070015;
         public static final int numPlayersText=0x7f070014;
         public static final int paired_devices=0x7f070003;
-        public static final int scan=0x7f070019;
+        public static final int scan=0x7f07001a;
+        public static final int textView=0x7f070019;
         public static final int title_left_text=0x7f070000;
         public static final int title_new_devices=0x7f070004;
         public static final int title_paired_devices=0x7f070002;
@@ -56,6 +57,7 @@ public final class R {
         public static final int main=0x7f030005;
         public static final int message=0x7f030006;
         public static final int textinput=0x7f030007;
+        public static final int waitview=0x7f030008;
     }
     public static final class menu {
         public static final int option_menu=0x7f060000;

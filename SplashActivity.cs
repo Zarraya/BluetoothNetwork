@@ -25,7 +25,7 @@ namespace SplashScreen
 		{
 			base.OnCreate(bundle);
 			Thread.Sleep(250); // Simulate a long loading process on app startup.
-			StartActivity(typeof(BluetoothChat.HomeActivity));
+			StartActivity(typeof(BluetoothChat.BlueHandle));
 		}
 	}
 }

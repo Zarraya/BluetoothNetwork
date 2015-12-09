@@ -54,3 +54,4 @@
 /Users/austinnafziger/BluetoothNetwork/obj/Debug/uploadflags.txt
 /Users/austinnafziger/BluetoothNetwork/obj/Debug/res/layout/textinput.xml
 /Users/austinnafziger/BluetoothNetwork/obj/Debug/res/layout/drawingview.xml
+/Users/austinnafziger/BluetoothNetwork/obj/Debug/res/layout/waitview.xml
