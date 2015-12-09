@@ -20,14 +20,13 @@ namespace BluetoothChat
 	public class BlueHandle : Activity
 	{
 		//Variables
-		public int maxDevices;
+		public int maxDevices = 0;
 		private ArrayList messages = new ArrayList ();
 		private int devices = 0;
 		private int directDevices = 0;
 
 		// Debugging
 		private const string TAG = "BluetoothChat";
-		private const bool Debug = true;
 		private bool activeReturn = false;
 
 		// Message types sent from the BluetoothChatService Handler
@@ -287,12 +286,16 @@ namespace BluetoothChat
 					if (message.Pass) {
 						//get devices
 						// decode byte[] for device names
+						if (message.Number != 0) {
+							bluetooth.maxDevices = message.Number;
+						}
 						string[] devices = ByteArrayToString(message.Data).Split(" ");
 
 						foreach (string device in devices) {
 							// add unique devices to the list
 							AddDevice(device);
 						}
+
 					} else {
 						//add message to the messageList
 						if (!bluetooth.HasMessages (message)) {
@@ -318,6 +321,9 @@ namespace BluetoothChat
 							temp += " ";
 						}
 						newMessage.Data = StringToByteArray(temp);
+						if (bluetooth.maxDevices != 0) {
+							newMessage.Number = bluetooth.maxDevices;
+						}
 						// sends the devices out to all devices
 						byte[] byteMessage = Encode (newMessage);
 						bluetooth.SendMessage (byteMessage);
@@ -341,6 +347,8 @@ namespace BluetoothChat
 					bluetooth.devices++;
 					text.Text = bluetooth.devices + " / " + bluetooth.maxDevices + " Devices Connected";
 
+
+					// TODO IF devices = maxDevices START THE NEXT SEQUENCE
 					return true;
 				}
 				return false;
@@ -432,7 +440,6 @@ namespace BluetoothChat
 				} else {
 				
 					// User did not enable Bluetooth or an error occured
-					Log.Debug (TAG, "BT not enabled");
 					Toast.MakeText (this, Resource.String.bt_not_enabled_leaving, ToastLength.Short).Show ();
 					Finish ();
 				}

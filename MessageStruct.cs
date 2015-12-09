@@ -8,15 +8,15 @@ namespace BluetoothChat
 		short source;
 		bool pass;
 		bool type;
-		int length;
+		int number;
 		byte[] data;
 
-		public int Length {
+		public int Number {
 			get {
-				return length;
+				return number;
 			}
 			set{
-				length = value;
+				number = value;
 			}
 		}
 
