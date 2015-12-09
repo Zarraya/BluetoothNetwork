@@ -275,6 +275,7 @@ namespace BluetoothChat
 					}
 
 					break;
+					// reads the message, if it is a device list then updates device list, else updates the message list
 				case MESSAGE_READ:
 					byte[] readBuf = (byte[])msg.Obj;
 
@@ -282,26 +283,21 @@ namespace BluetoothChat
 					if (message.Pass) {
 						//get devices
 						// decode byte[] for device names
-						string devices = ByteArrayToString(message.Data);
+						string[] devices = ByteArrayToString(message.Data).Split(" ");
 
-						// add unique devices to the list
-						if (!bluetooth.DeviceFound (device)) {
-							bluetooth.DeviceNames.Add (device);
-							bluetooth.devices++;
+						foreach (string device in devices) {
+							// add unique devices to the list
+							if (!bluetooth.DeviceFound (device)) {
+								bluetooth.DeviceNames.Add (device);
+								bluetooth.devices++;
+							}
 						}
 					} else {
 						//add message to the messageList
 						if (!bluetooth.HasMessages (message)) {
 							bluetooth.messages.Add (message);
 
-
-
-							// TODO DECODE and determine if is a device list
-							// if it is a device list, add new devices to the count
-							// TODO read to method
-							// blank.RecieveMessage(readBuf);
-
-							// forward the message
+							//send the message to all- flooding :)
 							bluetooth.SendMessage (readBuf);
 						}
 					}
@@ -312,6 +308,21 @@ namespace BluetoothChat
 						bluetooth.DeviceNames.Add (msg.Data.GetString (DEVICE_NAME));
 						bluetooth.devices++;
 						bluetooth.directDevices++;
+
+						// send updated device list to all
+						MessageStruct newMessage = new MessageStruct();
+						newMessage.Pass = true;
+						string temp = new string ();
+						// put the devices into a string
+						foreach (string device in DeviceNames) {
+							temp += device;
+							temp += " ";
+						}
+						newMessage.Data = StringToByteArray(temp);
+						// sends the devices out to all devices
+						byte[] byteMessage = Encode (newMessage);
+						bluetooth.SendMessage (byteMessage);
+
 					}
 					//Toast.MakeText (Application.Context, "Connected to " + bluetoothChat.connectedDeviceName, ToastLength.Short).Show ();
 					break;
@@ -374,6 +385,7 @@ namespace BluetoothChat
 
 			
 			}
+
 		}
 
 		/// <summary>
