@@ -24,7 +24,8 @@ namespace BluetoothChat
 		private ArrayList messages = new ArrayList ();
 		private int devices = 0;
 		private int directDevices = 0;
-
+		private int randomCount;
+		private int randomTotal;
 		// Debugging
 		private const string TAG = "BluetoothChat";
 		private bool activeReturn = false;
@@ -283,26 +284,44 @@ namespace BluetoothChat
 					byte[] readBuf = (byte[])msg.Obj;
 
 					MessageStruct message = Decode (readBuf);
-					if (message.Pass) {
+					if (message.Pass && !message.Type) {
 						//get devices
 						// decode byte[] for device names
 						if (message.Number != 0) {
 							bluetooth.maxDevices = message.Number;
 						}
-						string[] devices = ByteArrayToString(message.Data).Split(" ");
+						string[] devices = ByteArrayToString (message.Data).Split (" ");
 
 						foreach (string device in devices) {
 							// add unique devices to the list
-							AddDevice(device);
+							AddDevice (device);
 						}
 
-					} else {
+					} else if (!message.Pass) {
 						//add message to the messageList
 						if (!bluetooth.HasMessages (message)) {
 							bluetooth.messages.Add (message);
 
 							//send the message to all- flooding :)
 							bluetooth.SendMessage (readBuf);
+						}
+					} else {
+						// calculate if this is the starting device
+						// add numbers to the count
+						bluetooth.randomCount++;
+						bluetooth.randomTotal += message.Number;
+
+						// if all numbers have been received then find average
+						if(bluetooth.maxDevices == bluetooth.randomCount){
+							int average = bluetooth.randomCount / bluetooth.maxDevices;
+							//TODO SORT DEVICES
+							bluetooth.DeviceNames.Sort();
+							string[] temp = bluetooth.DeviceNames.ToArray ();
+							// gets the name of the device
+							string device = bluetooth.bluetoothAdapter.Name;
+
+							if(temp[average] == device)
+						// execute turn if it is you TODO
 						}
 					}
 					break;
@@ -314,6 +333,7 @@ namespace BluetoothChat
 						// send updated device list to all
 						MessageStruct newMessage = new MessageStruct();
 						newMessage.Pass = true;
+						newMessage.Type = false;
 						string temp = new string ();
 						// put the devices into a string
 						foreach (string device in DeviceNames) {
@@ -348,10 +368,26 @@ namespace BluetoothChat
 					text.Text = bluetooth.devices + " / " + bluetooth.maxDevices + " Devices Connected";
 
 
-					// TODO IF devices = maxDevices START THE NEXT SEQUENCE
+					// TODO IF devices = maxDevices START THE NEXT SEQUENCE && maxDevices!= 0
+					// then send random number and ready symbol
+					// sendStart(); TODO
 					return true;
 				}
 				return false;
+			}
+
+			/// <summary>
+			/// Sends the start. message with a random int, for determining who the first player is.
+			/// </summary>
+			public void sendStart(){
+				MessageStruct newMessage = new MessageStruct ();
+				Random rand = new Random ();
+
+				newMessage.Number = rand.Next (1, bluetooth.maxDevices);
+				newMessage.Type = true;
+				newMessage.Pass = true;
+
+				SendMessage (Encode (newMessage));
 			}
 
 			/// <summary>
