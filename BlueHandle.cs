@@ -114,12 +114,16 @@ namespace BluetoothChat
 
 						adapter.SetName(name.Text.ToString());
 
+						maxDevices = Integer.ParseInt(number.Text.ToString());
+
+						text.Text = devices + " / " + maxDevices + " Devices Connected";
+
 						//enable discoverability for ever
 						Intent discoverIntent = new Intent(BluetoothAdapter.ActionRequestDiscoverable);
 						discoverIntent.PutExtra(BluetoothAdapter.ExtraDiscoverableDuration, 0);
 						StartActivity(discoverIntent);
 
-
+						SetContentView(Resource.Layout.WaitView);
 					};
 
 				});
@@ -326,7 +330,11 @@ namespace BluetoothChat
 					break;					
 				}
 			}
-
+			/// <summary>
+			/// Adds the device.and updates text for devices connected to
+			/// </summary>
+			/// <returns><c>true</c>, if device was added, <c>false</c> otherwise.</returns>
+			/// <param name="device">Device.</param>
 			public bool AddDevice(string device){
 				if (!bluetooth.DeviceFound (device)) {
 					bluetooth.DeviceNames.Add (device);
