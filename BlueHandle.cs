@@ -320,8 +320,10 @@ namespace BluetoothChat
 							// gets the name of the device
 							string device = bluetooth.bluetoothAdapter.Name;
 
-							if(temp[average] == device)
-						// execute turn if it is you TODO
+							if(temp[average] == device){
+								// execute turn if it is you TODO
+								// START THE TURN HERE ######################## TODO
+							}
 						}
 					}
 					break;
@@ -367,10 +369,10 @@ namespace BluetoothChat
 					bluetooth.devices++;
 					text.Text = bluetooth.devices + " / " + bluetooth.maxDevices + " Devices Connected";
 
-
-					// TODO IF devices = maxDevices START THE NEXT SEQUENCE && maxDevices!= 0
-					// then send random number and ready symbol
-					// sendStart(); TODO
+					if(bluetooth.devices == bluetooth.maxDevices && bluetooth.maxDevices != 0){
+					// send random number to decide who goes first
+						sendStart();
+					}
 					return true;
 				}
 				return false;
