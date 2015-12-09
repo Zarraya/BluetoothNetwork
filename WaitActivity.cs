@@ -19,7 +19,6 @@ namespace BluetoothChat
 
 		private int totalDevices = 0;
 		private int connectedDevices = 0;
-		protected TextView text;
 
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
@@ -33,7 +32,7 @@ namespace BluetoothChat
 			totalDevices = total;
 			connectedDevices = connected;
 
-			text = FindViewById<TextView> (Resource.Id.textView);
+			TextView text = FindViewById<TextView> (Resource.Id.textView);
 			text.Text = connectedDevices + " / " + totalDevices + " Devices Connected";
 		}
 	}

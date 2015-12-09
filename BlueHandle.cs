@@ -78,21 +78,21 @@ namespace BluetoothChat
 
 			BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
 
+			#region Home Screen UI stuff
 
+			//set the content view to the home scree ui
 			SetContentView (Resource.Layout.Home);
 
+			//button handler for the only button - Math and Science Extravaganze with friends
 			var butt = FindViewById<Button> (Resource.Id.gameButton);
 			butt.Click += (object sender, EventArgs e) => {
 
-//				if(!adapter.IsEnabled){
-//
-//					Intent enableIntent = new Intent (BluetoothAdapter.ActionRequestEnable);
-//					StartActivityForResult (enableIntent, 1);
-//				}
-
+				//build a dialog to ask for a new game or an exsiting game
 				AlertDialog.Builder builder = new AlertDialog.Builder(this, 5);
 				builder.SetTitle("Start Game?");
 				builder.SetMessage("Do you want to start a new game or connect to an exsiting one?");
+
+				//if new game launch the new game view which will get the number of players and the name of the device
 				builder.SetPositiveButton("New Game", (s, ev) => {
 
 					SetContentView(Resource.Layout.TextInput);
@@ -111,6 +111,7 @@ namespace BluetoothChat
 
 						adapter.SetName(name.Text.ToString());
 
+						//enable discoverability for ever
 						Intent discoverIntent = new Intent(BluetoothAdapter.ActionRequestDiscoverable);
 						discoverIntent.PutExtra(BluetoothAdapter.ExtraDiscoverableDuration, 0);
 						StartActivity(discoverIntent);
@@ -120,6 +121,7 @@ namespace BluetoothChat
 
 				});
 
+				//if exsiting game then start the device finding dialog and initiate a connection
 				builder.SetNegativeButton("Existing Game", (s, ev) => {
 
 					activeReturn = true;
@@ -130,10 +132,11 @@ namespace BluetoothChat
 				});
 
 
-
+				//show the dialog
 				Dialog dialog = builder.Create();
 				dialog.Show();
 			};
+			#endregion
 				
 		}
 
@@ -327,7 +330,7 @@ namespace BluetoothChat
 				break;
 			}
 
-			StartActivity (typeof(WaitActivity));
+			SetContentView (Resource.Layout.WaitView);
 		}
 
 		/// <summary>
