@@ -187,6 +187,9 @@ namespace BluetoothChat
 			}
 		}
 
+		/// <summary>
+		/// Ensures the device is discoverable.
+		/// </summary>
 		private void EnsureDiscoverable ()
 		{
 			if (bluetoothAdapter.ScanMode != ScanMode.ConnectableDiscoverable) {
@@ -290,6 +293,15 @@ namespace BluetoothChat
 					Toast.MakeText (Application.Context, msg.Data.GetString (TOAST), ToastLength.Short).Show ();
 					break;					
 				}
+			}
+
+			public void Decode(){
+				//if message is list of devices then add devices
+				// else send message to UI
+				
+			}
+
+			public void Encode (){
 			}
 		}
 
