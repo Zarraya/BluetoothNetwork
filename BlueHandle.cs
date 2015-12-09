@@ -9,6 +9,7 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using Java.Lang;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace BluetoothChat
 {
@@ -267,17 +268,42 @@ namespace BluetoothChat
 					}
 					break;
 				case MESSAGE_WRITE:
+					byte[] writeBuf = (byte[])msg.Obj;
+					// put the message in the messageList
+					if (!bluetooth.HasMessages (writeBuf)) {
+						bluetooth.messages.Add (writeBuf);
+					}
+
 					break;
 				case MESSAGE_READ:
 					byte[] readBuf = (byte[])msg.Obj;
-					if(!bluetooth.HasMessages(readBuf)){
-						bluetooth.messages.Add (readBuf);
-						// TODO DECODE and determine if is a device list
-						// if it is a device list, add new devices to the count
-						// TODO read to method
-						// blank.RecieveMessage(readBuf);
-						// forward the message
-						bluetooth.SendMessage(readBuf);
+
+					MessageStruct message = Decode (readBuf);
+					if (message.Pass) {
+						//get devices
+						// decode byte[] for device names
+						string devices = ByteArrayToString(message.Data);
+
+						// add unique devices to the list
+						if (!bluetooth.DeviceFound (device)) {
+							bluetooth.DeviceNames.Add (device);
+							bluetooth.devices++;
+						}
+					} else {
+						//add message to the messageList
+						if (!bluetooth.HasMessages (message)) {
+							bluetooth.messages.Add (message);
+
+
+
+							// TODO DECODE and determine if is a device list
+							// if it is a device list, add new devices to the count
+							// TODO read to method
+							// blank.RecieveMessage(readBuf);
+
+							// forward the message
+							bluetooth.SendMessage (readBuf);
+						}
 					}
 					break;
 					// saves the device to the list of devices
@@ -295,13 +321,58 @@ namespace BluetoothChat
 				}
 			}
 
-			public void Decode(){
-				//if message is list of devices then add devices
-				// else send message to UI
-				
+			/// <summary>
+			/// Decode the specified message.
+			/// </summary>
+			/// <param name="message">Message.</param>
+			public MessageStruct Decode(byte[] message){
+				MessageStruct messages = new MessageStruct ();
+				int size = Marshal.SizeOf (messages);
+				IntPtr pointer = Marshal.AllocHGlobal (size);
+				Marshal.Copy (message, 0, pointer, size);
+				messages = (MessageStruct)Marshal.PtrToStructure (pointer, messages.GetType ());
+				Marshal.FreeHGlobal (pointer);
+				return messages;
+
+			}
+			/// <summary>
+			/// Encode the specified message.
+			/// </summary>
+			/// <param name="message">Message.</param>
+			public byte[] Encode (MessageStruct message){
+				int size = Marshal.SizeOf (message);
+				byte[] array = new byte[size];
+				IntPtr pointer = Marshal.AllocHGlobal (size);
+				Marshal.StructureToPtr (message, pointer, true);
+				Marshal.Copy (pointer, array, 0, size);
+				Marshal.FreeHGlobal (pointer);
+				return array;
 			}
 
-			public void Encode (){
+			/// <summary>
+			/// Strings to byte array.
+			/// </summary>
+			/// <returns>The to byte array.</returns>
+			/// <param name="temp">Temp.</param>
+			public byte[] StringToByteArray(string temp){
+				byte[] bytes = new byte[temp.Length*sizeof(char)];
+				System.Buffer.BlockCopy(temp.ToCharArray(),0,bytes,0,bytes.Length);
+				return bytes;
+			}
+			/// <summary>
+			/// Bytes the array to string.
+			/// </summary>
+			/// <returns>The array to string.</returns>
+			/// <param name="temp">Temp.</param>
+			public string ByteArrayToString(byte[] temp){
+				char[] chars = new char[temp.Length / sizeof(char)];
+				System.Buffer.BlockCopy (temp, 0, chars, 0, temp.Length);
+				return new string (chars);
+			}
+
+			public byte[] BitmapToByteArray(Android.Graphics.Bitmap temp){
+
+			
 			}
 		}
 
